@@ -17,18 +17,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         inputs_dyn.push(inp);
     });
 
-    heart_model.set_input(InputTypes::DENSE(inputs[0].len()));
+    loop {
+        heart_model.set_input(InputTypes::DENSE(inputs[0].len()));
 
-    heart_model.add_layer(DENSE(32, Activations::SIGMOID, 0.01));
-    heart_model.add_layer(DENSE(64, Activations::SIGMOID, 0.01));
-    heart_model.add_layer(DENSE(16, Activations::SIGMOID, 0.01));
-    heart_model.add_layer(DENSE(1, Activations::SIGMOID, 0.01));
+        heart_model.add_layer(DENSE(128, Activations::RELU, 0.01));
+        heart_model.add_layer(DENSE(64, Activations::RELU, 0.01));
+        heart_model.add_layer(DENSE(8, Activations::RELU, 0.01));
+        heart_model.add_layer(DENSE(1, Activations::SIGMOID, 0.01));
 
-    heart_model.compile();
+        heart_model.compile();
 
-    heart_model.fit(&inputs_dyn, &outputs, 10, ErrorTypes::MeanAbsolute);
+        heart_model.fit(&inputs_dyn, &outputs, 10, ErrorTypes::MeanAbsolute);
 
-    heart_model.serialize_unda_fmt("heart_attak.unda");
+        heart_model.serialize_unda_fmt("heart_attak.unda");
+    }
 
     Ok(())
 }
