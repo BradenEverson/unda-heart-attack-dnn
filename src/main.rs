@@ -8,21 +8,21 @@ use unda::core::layer::{methods::activations::Activations,
 layers::{LayerTypes::DENSE, InputTypes}};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut heart_model = Network::new(4);
-
-    let (inputs, outputs) = HeartModel::from_file("src/heart_data/data/heart.csv")?;
-    let mut inputs_dyn: Vec<&dyn Input> = vec![];
-
-    inputs.iter().for_each(|inp| {
-        inputs_dyn.push(inp);
-    });
-
     loop {
+        let mut heart_model = Network::new(4);
+
+        let (inputs, outputs) = HeartModel::from_file("src/heart_data/data/heart.csv")?;
+        let mut inputs_dyn: Vec<&dyn Input> = vec![];
+
+        inputs.iter().for_each(|inp| {
+            inputs_dyn.push(inp);
+        });
+
         heart_model.set_input(InputTypes::DENSE(inputs[0].len()));
 
-        heart_model.add_layer(DENSE(128, Activations::RELU, 0.01));
-        heart_model.add_layer(DENSE(64, Activations::RELU, 0.01));
-        heart_model.add_layer(DENSE(8, Activations::RELU, 0.01));
+        heart_model.add_layer(DENSE(128, Activations::SIGMOID, 0.01));
+        heart_model.add_layer(DENSE(64, Activations::SIGMOID, 0.01));
+        heart_model.add_layer(DENSE(8, Activations::SIGMOID, 0.01));
         heart_model.add_layer(DENSE(1, Activations::SIGMOID, 0.01));
 
         heart_model.compile();
