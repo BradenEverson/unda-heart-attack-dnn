@@ -9,7 +9,7 @@ layers::{LayerTypes::DENSE, InputTypes}};
 
 fn main() -> Result<(), Box<dyn Error>> {
     loop {
-        let mut heart_model = Network::new(4);
+        let mut heart_model = Network::new(128);
 
         let (inputs, outputs) = HeartModel::from_file("src/heart_data/data/heart.csv")?;
         let mut inputs_dyn: Vec<&dyn Input> = vec![];
@@ -20,16 +20,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         heart_model.set_input(InputTypes::DENSE(inputs[0].len()));
 
-        heart_model.add_layer(DENSE(128, Activations::SIGMOID, 0.01));
-        heart_model.add_layer(DENSE(64, Activations::SIGMOID, 0.01));
-        heart_model.add_layer(DENSE(8, Activations::SIGMOID, 0.01));
-        heart_model.add_layer(DENSE(1, Activations::SIGMOID, 0.01));
+        heart_model.add_layer(DENSE(8, Activations::SIGMOID, 0.0001));
+        heart_model.add_layer(DENSE(32, Activations::SIGMOID, 0.0001));
+        heart_model.add_layer(DENSE(16, Activations::SIGMOID, 0.0001));
+
+        heart_model.add_layer(DENSE(1, Activations::SIGMOID, 0.0001));
 
         heart_model.compile();
 
-        heart_model.fit(&inputs_dyn, &outputs, 10, ErrorTypes::MeanAbsolute);
+        heart_model.fit(&inputs_dyn, &outputs, 5, ErrorTypes::CategoricalCrossEntropy);
 
-        heart_model.serialize_unda_fmt("heart_attak.unda");
+        heart_model.serialize_unda_fmt(&format!("heart_attak_{:.2}.unda", heart_model.loss * 100f32));
     }
 
     Ok(())
